@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 
 # Set up API keys and credentials
-os.environ["GOOGLE_API_KEY"] = "AIzaSyChGObvSKtfT7C0FakHeaggVC4EAffU2P8"
+os.environ["GOOGLE_API_KEY"] = "your api key"
 
 # Configure the Gemini model
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
