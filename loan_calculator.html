@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #4ecca3;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a29e;
+        }
+        #loan-result {
+            background-color: #0f3460;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #4ecca3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Loan Calculator</h1>
+    <form id="loan-form">
+        <label for="principal">Loan Amount:</label>
+        <input type="number" id="principal" name="principal" required>
+        
+        <label for="interest_rate">Annual Interest Rate (%):</label>
+        <input type="number" id="interest_rate" name="interest_rate" step="0.01" required>
+        
+        <label for="tenure">Loan Tenure (years):</label>
+        <input type="number" id="tenure" name="tenure" required>
+        
+        <button type="submit">Calculate Loan</button>
+    </form>
+    <div id="loan-result"></div>
+
+    <script>
+        document.getElementById('loan-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            fetch('/calculate_loan', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loan-result').innerHTML = `
+                    <p>Monthly EMI: ₹${data.emi.toFixed(2)}</p>
+                    <p>Total Payment: ₹${data.total_payment.toFixed(2)}</p>
+                    <p>Total Interest: ₹${data.total_interest.toFixed(2)}</p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Advisor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #333;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #advice {
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real Estate Advisor</h1>
+    <form id="real-estate-form">
+        <label for="budget">Budget (in ₹):</label>
+        <input type="number" id="budget" name="budget" required>
+        
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+        
+        <label for="purpose">Purpose:</label>
+        <select id="purpose" name="purpose" required>
+            <option value="investment">Investment</option>
+            <option value="living">Living</option>
+        </select>
+        
+        <button type="submit">Get Advice</button>
+    </form>
+    <div id="advice"></div>
+
+    <script>
+        document.getElementById('real-estate-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch('/get_real_estate_advice', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('advice').innerHTML = `
+                    <h2>Real Estate Advice</h2>
+                    <p>${data.advice}</p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Advisor</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #4ecca3;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #45a29e;
+        }
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0f3460;
+            color: #ffffff;
+        }
+        button {
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a29e;
+        }
+        #advice {
+            background-color: #0f3460;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #4ecca3;
+        }
+        h2 {
+            color: #45a29e;
+            border-bottom: 2px solid #45a29e;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real Estate Advisor</h1>
+    <form id="real-estate-form">
+        <label for="budget">Budget (in ₹):</label>
+        <input type="number" id="budget" name="budget" required>
+        
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+        
+        <label for="purpose">Purpose:</label>
+        <select id="purpose" name="purpose" required>
+            <option value="investment">Investment</option>
+            <option value="living">Living</option>
+        </select>
+        
+        <button type="submit">Get Advice</button>
+    </form>
+    <div id="advice"></div>
+    <script>
+        document.getElementById('real-estate-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch('/get_real_estate_advice', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('advice').innerHTML = `
+                    <h2>Real Estate Advice</h2>
+                    <p>${data.advice}</p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>

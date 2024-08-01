@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Analyst AI</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #4ecca3;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #45a29e;
+            border-bottom: 2px solid #45a29e;
+            padding-bottom: 10px;
+        }
+        #chat-section, #market-highlights, #additional-features {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #chat-form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #query {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+        }
+        #chat-form input[type="submit"] {
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #chat-form input[type="submit"]:hover {
+            background-color: #45a29e;
+        }
+        #chat-response {
+            background-color: #0f3460;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #4ecca3;
+        }
+        iframe {
+            border: none;
+            border-radius: 5px;
+            background-color: #0f3460;
+            width: 100%;
+            height: 500px;
+        }
+        #additional-features ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #additional-features li {
+            margin-bottom: 10px;
+        }
+        #additional-features a {
+            color: #4ecca3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        #additional-features a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>📈 Stock Market Analyst AI 🤖</h1>
+    
+    <div id="chat-section">
+        <h2>Chat with the AI Analyst</h2>
+        <form id="chat-form">
+            <input type="text" id="query" name="query" placeholder="Ask about stocks, companies, or recent news...">
+            <input type="submit" value="Ask AI">
+        </form>
+        <div id="chat-response"></div>
+    </div>
+    
+    <div id="market-highlights">
+        <h2>Current Market Highlights</h2>
+        <iframe src="/market_highlights"></iframe>
+    </div>
+
+    <div id="additional-features">
+        <h2>Additional Financial Tools</h2>
+        <ul>
+            <li><a href="/tax_planner">Tax Planner</a></li>
+            <li><a href="/budget_designer">Budget Designer</a></li>
+            <li><a href="/loan_calculator">Loan Calculator</a></li>
+            <li><a href="/real_estate_advisor">Real Estate Advisor</a></li>
+        </ul>
+    </div>
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var query = document.getElementById('query').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/chat', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById('chat-response').innerHTML = response.response;
+                } else {
+                    console.error('Request failed. Status:', xhr.status);
+                }
+            };
+            xhr.send('query=' + encodeURIComponent(query));
+        });
+    </script>
+</body>
+</html>

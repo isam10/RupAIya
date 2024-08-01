@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Highlights</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0f3460;
+            color: #ffffff;
+            margin: 0;
+            padding: 10px;
+            line-height: 1.6;
+        }
+        h2 {
+            color: #4ecca3;
+            border-bottom: 2px solid #4ecca3;
+            padding-bottom: 10px;
+        }
+        .stock-card {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .stock-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #45a29e;
+        }
+        .stock-change {
+            font-weight: bold;
+        }
+        .positive {
+            color: #4ecca3;
+        }
+        .negative {
+            color: #e94560;
+        }
+        .news-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .news-item {
+            background-color: #1a1a2e;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #4ecca3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Current Market Highlights</h2>
+    {% for candidate in highlights %}
+        <div class="stock-card">
+            <div class="stock-header">
+                <span class="stock-name">{{ candidate[1] }} ({{ candidate[0] }})</span>
+                <span class="stock-change {% if candidate[3] > 0 %}positive{% else %}negative{% endif %}">
+                    {{ candidate[2] }}{{ "%.2f"|format(candidate[3]|abs) }}%
+                </span>
+            </div>
+            <ul class="news-list">
+            {% for article in candidate[4] %}
+                <li class="news-item">{{ article }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</body>
+</html>

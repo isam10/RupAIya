@@ -1,0 +1,143 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head> -->
+    <!-- ... (existing head content) ... -->
+<!-- </head>
+<body>
+    <h1>Tax Planner</h1>
+    <form id="tax-form">
+        <label for="income">Annual Income:</label>
+        <input type="number" id="income" name="income" required>
+        <button type="submit">Get Tax Advice</button>
+    </form>
+    <div id="tax-result"></div>
+    <div id="ai-advice"></div>
+
+    <script>
+        document.getElementById('tax-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch('/calculate_tax', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tax-result').innerHTML = `
+                    <h2>Tax Calculation</h2>
+                    <p>Annual Income: ₹${data.income.toFixed(2)}</p>
+                    <p>Estimated Tax: ₹${data.tax.toFixed(2)}</p>
+                    <p>Effective Tax Rate: ${data.effective_tax_rate.toFixed(2)}%</p>
+                `;
+                document.getElementById('ai-advice').innerHTML = `
+                    <h2>Personalized Tax Advice</h2>
+                    <p>${data.ai_advice}</p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Planner</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #4ecca3;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #45a29e;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0f3460;
+            color: #ffffff;
+        }
+        button {
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a29e;
+        }
+        #tax-result, #ai-advice {
+            background-color: #0f3460;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #4ecca3;
+        }
+        h2 {
+            color: #45a29e;
+            border-bottom: 2px solid #45a29e;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tax Planner</h1>
+    <form id="tax-form">
+        <label for="income">Annual Income:</label>
+        <input type="number" id="income" name="income" required>
+        <button type="submit">Get Tax Advice</button>
+    </form>
+    <div id="tax-result"></div>
+    <div id="ai-advice"></div>
+    <script>
+        document.getElementById('tax-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch('/calculate_tax', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tax-result').innerHTML = `
+                    <h2>Tax Calculation</h2>
+                    <p>Annual Income: ₹${data.income.toFixed(2)}</p>
+                    <p>Estimated Tax: ₹${data.tax.toFixed(2)}</p>
+                    <p>Effective Tax Rate: ${data.effective_tax_rate.toFixed(2)}%</p>
+                `;
+                document.getElementById('ai-advice').innerHTML = `
+                    <h2>Personalized Tax Advice</h2>
+                    <p>${data.ai_advice}</p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
