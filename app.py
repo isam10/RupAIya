@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 import pandas as pd
 import numpy as np
+import plotly.graph_objs as go
+import plotly.io as pio
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 
 # Set up API keys and credentials
 os.environ["GOOGLE_API_KEY"] = "your api key"
@@ -246,6 +250,329 @@ def market_highlights():
     highlights = get_market_highlights()
     return render_template('market_highlights.html', highlights=highlights)
 
+
+
+# @app.route('/stock_analysis', methods=['GET', 'POST'])
+# def stock_analysis():
+#     if request.method == 'POST':
+#         ticker = request.form['ticker']
+#         try:
+#             analysis = perform_stock_analysis(ticker)
+#             return render_template('stock_analysis.html', analysis=analysis, ticker=ticker)
+#         except Exception as e:
+#             error_message = f"An error occurred: {str(e)}"
+#             return render_template('stock_analysis.html', error=error_message)
+#     return render_template('stock_analysis.html')
+# def perform_stock_analysis(ticker):
+#     fundamental = perform_fundamental_analysis(ticker)
+#     technical = perform_technical_analysis(ticker)
+    
+#     analysis_summary = f"""
+#     Fundamental Analysis:
+#     P/E Ratio: {fundamental['pe_ratio']}
+#     EPS: {fundamental['eps']}
+#     Revenue Growth: {fundamental['revenue_growth']}
+#     Debt to Equity: {fundamental['debt_to_equity']}
+#     Profit Margin: {fundamental['profit_margin']}
+
+#     Technical Analysis:
+#     50-Day Moving Average: {technical['moving_average_50']}
+#     200-Day Moving Average: {technical['moving_average_200']}
+#     RSI: {technical['rsi']}
+#     MACD: {technical['macd']}
+#     Support Level: {technical['support_level']}
+#     Resistance Level: {technical['resistance_level']}
+#     """
+    
+#     prompt = f"Based on the following stock analysis for {ticker}, provide a brief summary and recommendation:\n\n{analysis_summary}"
+    
+#     ai_insight = model.generate_content(prompt).text
+    
+#     fundamental_chart = create_fundamental_chart(fundamental)
+#     technical_chart = create_technical_chart(technical)
+    
+#     return {
+#         'fundamental': fundamental,
+#         'technical': technical,
+#         'ai_insight': ai_insight,
+#         'fundamental_chart': fundamental_chart,
+#         'technical_chart': technical_chart
+#     }
+
+# def perform_fundamental_analysis(ticker):
+#     stock = yf.Ticker(ticker)
+#     info = stock.info
+    
+#     return {
+#         'pe_ratio': info.get('trailingPE', 'N/A'),
+#         'eps': info.get('trailingEps', 'N/A'),
+#         'revenue_growth': info.get('revenueGrowth', 'N/A'),
+#         'debt_to_equity': info.get('debtToEquity', 'N/A'),
+#         'profit_margin': info.get('profitMargins', 'N/A')
+#     }
+
+# def perform_technical_analysis(ticker):
+#     stock = yf.Ticker(ticker)
+#     hist = stock.history(period="1y")
+    
+#     ma50 = hist['Close'].rolling(window=50).mean().iloc[-1]
+#     ma200 = hist['Close'].rolling(window=200).mean().iloc[-1]
+    
+#     def calculate_rsi(data, window=14):
+#         delta = data['Close'].diff()
+#         gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+#         loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+#         rs = gain / loss
+#         return 100 - (100 / (1 + rs))
+    
+#     rsi = calculate_rsi(hist).iloc[-1]
+    
+#     def calculate_macd(data, fast=12, slow=26, signal=9):
+#         fast_ema = data['Close'].ewm(span=fast, adjust=False).mean()
+#         slow_ema = data['Close'].ewm(span=slow, adjust=False).mean()
+#         macd = fast_ema - slow_ema
+#         signal_line = macd.ewm(span=signal, adjust=False).mean()
+#         return macd.iloc[-1] - signal_line.iloc[-1]
+    
+#     macd = calculate_macd(hist)
+    
+#     support = hist['Low'].min()
+#     resistance = hist['High'].max()
+    
+#     return {
+#         'moving_average_50': ma50,
+#         'moving_average_200': ma200,
+#         'rsi': rsi,
+#         'macd': macd,
+#         'support_level': support,
+#         'resistance_level': resistance
+#     }
+
+# def create_fundamental_chart(fundamental_data):
+#     fig = go.Figure(data=[go.Bar(
+#         x=['P/E Ratio', 'EPS', 'Revenue Growth', 'Debt to Equity', 'Profit Margin'],
+#         y=[fundamental_data['pe_ratio'], fundamental_data['eps'], fundamental_data['revenue_growth'],
+#            fundamental_data['debt_to_equity'], fundamental_data['profit_margin']]
+#     )])
+#     fig.update_layout(title='Fundamental Analysis Metrics', yaxis_title='Value')
+#     return pio.to_html(fig, full_html=False)
+
+# def create_technical_chart(technical_data):
+#     fig = go.Figure(data=[go.Scatter(
+#         x=['50-Day MA', '200-Day MA', 'RSI', 'MACD', 'Support', 'Resistance'],
+#         y=[technical_data['moving_average_50'], technical_data['moving_average_200'],
+#            technical_data['rsi'], technical_data['macd'],
+#            technical_data['support_level'], technical_data['resistance_level']],
+#         mode='lines+markers'
+#     )])
+#     fig.update_layout(title='Technical Analysis Metrics', yaxis_title='Value')
+#     return pio.to_html(fig, full_html=False)
+@app.route('/stock_analysis', methods=['GET', 'POST'])
+def stock_analysis():
+    if request.method == 'POST':
+        ticker = request.form['ticker']
+        try:
+            analysis = perform_stock_analysis(ticker)
+            return render_template('stock_analysis.html', analysis=analysis, ticker=ticker)
+        except Exception as e:
+            error_message = f"An error occurred: {str(e)}"
+            return render_template('stock_analysis.html', error=error_message)
+    return render_template('stock_analysis.html')
+def perform_stock_analysis(ticker):
+    try:
+        # Fetch stock data
+        stock = yf.Ticker(ticker)
+        stock_data = stock.history(period="1y")
+        info = stock.info
+
+        # Perform fundamental analysis
+        fundamental = {
+            'pe_ratio': info.get('trailingPE', 0),
+            'eps': info.get('trailingEps', 0),
+            'revenue_growth': info.get('revenueGrowth', 0),
+            'debt_to_equity': info.get('debtToEquity', 0),
+            'profit_margin': info.get('profitMargins', 0)
+        }
+
+        # Perform technical analysis
+        technical = perform_technical_analysis(stock_data)
+
+        # Create charts
+        fundamental_chart = create_fundamental_chart(fundamental)
+        technical_chart = create_technical_chart(stock_data, technical)
+
+        # Generate AI insight
+        analysis_summary = f"""
+        Fundamental Analysis:
+        P/E Ratio: {fundamental['pe_ratio']}
+        EPS: {fundamental['eps']}
+        Revenue Growth: {fundamental['revenue_growth']}
+        Debt to Equity: {fundamental['debt_to_equity']}
+        Profit Margin: {fundamental['profit_margin']}
+
+        Technical Analysis:
+        50-Day Moving Average: {technical['moving_average_50']}
+        200-Day Moving Average: {technical['moving_average_200']}
+        RSI: {technical['rsi']}
+        MACD: {technical['macd']}
+        Support Level: {technical['support_level']}
+        Resistance Level: {technical['resistance_level']}
+        """
+
+        prompt = f"Based on the following stock analysis for {ticker}, provide a brief summary and recommendation in simple terms for a beginner investor:\n\n{analysis_summary}"
+        ai_insight = model.generate_content(prompt).text
+
+        return {
+            'fundamental': fundamental,
+            'technical': technical,
+            'ai_insight': ai_insight,
+            'fundamental_chart': fundamental_chart.to_html(full_html=False),
+            'technical_chart': technical_chart.to_html(full_html=False)
+        }
+    except Exception as e:
+        return f"An error occurred while analyzing the stock: {str(e)}"
+
+def perform_technical_analysis(data):
+    ma50 = data['Close'].rolling(window=50).mean().iloc[-1]
+    ma200 = data['Close'].rolling(window=200).mean().iloc[-1]
+    
+    def calculate_rsi(data, window=14):
+        delta = data['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+        rs = gain / loss
+        return 100 - (100 / (1 + rs))
+    
+    rsi = calculate_rsi(data).iloc[-1]
+    
+    def calculate_macd(data, fast=12, slow=26, signal=9):
+        fast_ema = data['Close'].ewm(span=fast, adjust=False).mean()
+        slow_ema = data['Close'].ewm(span=slow, adjust=False).mean()
+        macd = fast_ema - slow_ema
+        signal_line = macd.ewm(span=signal, adjust=False).mean()
+        return macd.iloc[-1] - signal_line.iloc[-1]
+    
+    macd = calculate_macd(data)
+    
+    support = data['Low'].min()
+    resistance = data['High'].max()
+    
+    return {
+        'moving_average_50': ma50,
+        'moving_average_200': ma200,
+        'rsi': rsi,
+        'macd': macd,
+        'support_level': support,
+        'resistance_level': resistance
+    }
+
+def create_fundamental_chart(fundamental):
+    categories = ['P/E Ratio', 'EPS ($)', 'Revenue Growth (%)', 'Debt to Equity', 'Profit Margin (%)']
+    values = [
+        fundamental['pe_ratio'],
+        fundamental['eps'],
+        fundamental['revenue_growth'] * 100 if fundamental['revenue_growth'] != 'N/A' else 0,
+        fundamental['debt_to_equity'],
+        fundamental['profit_margin'] * 100 if fundamental['profit_margin'] != 'N/A' else 0
+    ]
+
+    fig = go.Figure(data=go.Bar(
+        x=categories,
+        y=values,
+        text=[f"{v:.2f}" for v in values],
+        textposition='auto',
+    ))
+
+    fig.update_layout(
+        title='Fundamental Analysis Overview',
+        xaxis_title='Metrics',
+        yaxis_title='Values',
+        height=500,
+        annotations=[
+            go.layout.Annotation(
+                x=0.5,
+                y=-0.15,
+                showarrow=False,
+                text="P/E Ratio: Price to Earnings ratio, lower is generally better<br>"
+                     "EPS: Earnings Per Share, higher is better<br>"
+                     "Revenue Growth: Year-over-year revenue increase, higher is better<br>"
+                     "Debt to Equity: Company's financial leverage, lower is generally better<br>"
+                     "Profit Margin: Percentage of revenue that's profit, higher is better",
+                xref="paper",
+                yref="paper",
+                align="center",
+            )
+        ]
+    )
+
+    return fig
+
+def create_technical_chart(stock_data, technical):
+    fig = make_subplots(rows=3, cols=1, shared_xaxes=True, 
+                        vertical_spacing=0.1,
+                        row_heights=[0.5, 0.25, 0.25],
+                        subplot_titles=("Price and Moving Averages", "Trading Volume", "Relative Strength Index (RSI)"))
+
+    # Candlestick chart
+    fig.add_trace(go.Candlestick(x=stock_data.index,
+                                 open=stock_data['Open'],
+                                 high=stock_data['High'],
+                                 low=stock_data['Low'],
+                                 close=stock_data['Close'],
+                                 name='Price'), row=1, col=1)
+
+    # Add moving averages
+    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'].rolling(window=50).mean(),
+                             name='50-day MA', line=dict(color='orange')), row=1, col=1)
+    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'].rolling(window=200).mean(),
+                             name='200-day MA', line=dict(color='red')), row=1, col=1)
+
+    # Volume chart
+    fig.add_trace(go.Bar(x=stock_data.index, y=stock_data['Volume'], name='Volume'), row=2, col=1)
+
+    # RSI
+    rsi = calculate_rsi(stock_data)
+    fig.add_trace(go.Scatter(x=stock_data.index, y=rsi, name='RSI'), row=3, col=1)
+
+    # Add RSI reference lines
+    fig.add_hline(y=70, line_dash="dash", line_color="red", row=3, col=1)
+    fig.add_hline(y=30, line_dash="dash", line_color="green", row=3, col=1)
+
+    # Update layout
+    fig.update_layout(
+        title='Technical Analysis Dashboard',
+        height=900,
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        annotations=[
+            go.layout.Annotation(
+                x=0.5,
+                y=-0.15,
+                showarrow=False,
+                text="Candlesticks show daily price movements<br>"
+                     "Moving Averages indicate trend direction<br>"
+                     "Volume bars show trading activity<br>"
+                     "RSI above 70 suggests overbought, below 30 suggests oversold",
+                xref="paper",
+                yref="paper",
+                align="center",
+            )
+        ]
+    )
+
+    # Update y-axes
+    fig.update_yaxes(title_text="Price ($)", row=1, col=1)
+    fig.update_yaxes(title_text="Volume", row=2, col=1)
+    fig.update_yaxes(title_text="RSI", range=[0, 100], row=3, col=1)
+
+    return fig
+
+def calculate_rsi(data, window=14):
+    delta = data['Close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+    rs = gain / loss
+    return 100 - (100 / (1 + rs))
 # @app.route('/tax_planner')
 # def tax_planner():
 #     return render_template('tax_planner.html')
