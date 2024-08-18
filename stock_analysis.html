@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis</title>
+    <style>
+        /* Combine styles from both previous files */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #4ecca3;
+        }
+        form, .analysis-section {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #45a29e;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0f3460;
+            color: #ffffff;
+        }
+        button {
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a29e;
+        }
+        .error {
+            color: #e74c3c;
+            background-color: #0f3460;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .chart-container {
+            background-color: #0f3460;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stock Analysis</h1>
+    
+    {% if not analysis %}
+    <form action="/stock_analysis" method="post">
+        <label for="ticker">Enter Stock Ticker:</label>
+        <input type="text" id="ticker" name="ticker" required>
+        <button type="submit">Analyze Stock</button>
+    </form>
+    {% endif %}
+
+    {% if error %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if analysis %}
+    <h2>Analysis for {{ ticker }}</h2>
+    
+    <div class="analysis-section">
+        <h2>Fundamental Analysis</h2>
+        <ul>
+            <li>P/E Ratio: {{ analysis.fundamental.pe_ratio }}</li>
+            <li>EPS: {{ analysis.fundamental.eps }}</li>
+            <li>Revenue Growth: {{ analysis.fundamental.revenue_growth }}</li>
+            <li>Debt to Equity: {{ analysis.fundamental.debt_to_equity }}</li>
+            <li>Profit Margin: {{ analysis.fundamental.profit_margin }}</li>
+        </ul>
+    </div>
+
+    <div class="chart-container">
+        {{ analysis.fundamental_chart | safe }}
+    </div>
+
+    <div class="analysis-section">
+        <h2>Technical Analysis</h2>
+        <ul>
+            <li>50-Day Moving Average: {{ analysis.technical.moving_average_50 }}</li>
+            <li>200-Day Moving Average: {{ analysis.technical.moving_average_200 }}</li>
+            <li>RSI: {{ analysis.technical.rsi }}</li>
+            <li>MACD: {{ analysis.technical.macd }}</li>
+            <li>Support Level: {{ analysis.technical.support_level }}</li>
+            <li>Resistance Level: {{ analysis.technical.resistance_level }}</li>
+        </ul>
+    </div>
+
+    <div class="chart-container">
+        {{ analysis.technical_chart | safe }}
+    </div>
+
+    <div class="analysis-section">
+        <h2>AI Insight</h2>
+        <p>{{ analysis.ai_insight }}</p>
+    </div>
+    
+    <form action="/stock_analysis" method="get">
+        <button type="submit">Analyze Another Stock</button>
+    </form>
+    {% endif %}
+</body>
+</html>
