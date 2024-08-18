@@ -27,6 +27,11 @@ Welcome to the cutting-edge world of AI-driven financial analysis! This project 
 - **Loan Genius**: Calculate EMIs, total payments, and find the best loan options
 - **Real Estate Guru**: Receive location-specific real estate investment insights
 
+### 📈 Advanced Stock Analysis
+
+- **Detailed fundamental and technical analysis for individual stocks
+Interactive charts for visualizing stock performance and key metrics
+AI-generated insights and recommendations for each analyzed stock**
 ---
 
 ## 🛠️ Cutting-Edge Tech Stack
