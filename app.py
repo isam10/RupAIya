@@ -752,19 +752,47 @@ def loan_calculator():
 @app.route('/calculate_loan', methods=['POST'])
 def calculate_loan():
     principal = float(request.form['principal'])
-    interest_rate = float(request.form['interest_rate']) / 100 / 12  # Monthly interest rate
-    tenure = int(request.form['tenure']) * 12  # Convert years to months
+    annual_interest_rate = float(request.form['interest_rate'])
+    interest_rate = annual_interest_rate / 100 / 12  # Convert annual rate to monthly rate
+    tenure_years = int(request.form['tenure'])
+    tenure_months = tenure_years * 12  # Convert years to months
     
-    emi = (principal * interest_rate * (1 + interest_rate)**tenure) / ((1 + interest_rate)**tenure - 1)
+    emi = (principal * interest_rate * (1 + interest_rate)**tenure_months) / ((1 + interest_rate)**tenure_months - 1)
     
-    total_payment = emi * tenure
+    total_payment = emi * tenure_months
     total_interest = total_payment - principal
+    
+    # Generate AI advice
+    advice = generate_loan_advice(principal, interest_rate * 12 * 100, tenure_years/ 12, emi)
     
     return jsonify({
         'emi': emi,
         'total_payment': total_payment,
-        'total_interest': total_interest
+        'total_interest': total_interest,
+        'ai_advice': advice
     })
 
+def generate_loan_advice(principal, interest_rate, tenure, emi):
+    prompt = f"""
+    As a financial advisor, provide personalized advice for someone taking a loan with the following details:
+    - Loan Amount: ₹{principal}
+    - Annual Interest Rate: {interest_rate:.2f}%
+    - Loan Tenure: {tenure} years
+    - Monthly EMI: ₹{emi:.2f}
+
+    Please provide advice on:
+    1. The feasibility of this loan based on general financial principles.
+    2. Suggestions for managing the loan effectively.
+    3. Potential risks and how to mitigate them.
+    4. Any alternative options they should consider.
+
+    Keep the advice concise, practical, and tailored to the Indian context.
+    """
+    
+    try:
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        return f"An error occurred while generating advice: {e}"
 if __name__ == '__main__':
     app.run(debug=True)
