@@ -19,15 +19,22 @@
             font-size: 2.5em;
             margin-bottom: 30px;
         }
+        h2 {
+            color: #45a29e;
+            border-bottom: 2px solid #45a29e;
+            padding-bottom: 10px;
+        }
         form {
             background-color: #16213e;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         label {
             display: block;
             margin-bottom: 5px;
+            color: #45a29e;
         }
         input[type="number"] {
             width: 100%;
@@ -35,6 +42,8 @@
             margin-bottom: 15px;
             border: none;
             border-radius: 5px;
+            background-color: #0f3460;
+            color: #ffffff;
         }
         button {
             background-color: #4ecca3;
@@ -49,7 +58,7 @@
         button:hover {
             background-color: #45a29e;
         }
-        #loan-result {
+        #loan-result, #ai-advice {
             background-color: #0f3460;
             border-radius: 5px;
             padding: 15px;
@@ -61,7 +70,7 @@
 <body>
     <h1>Loan Calculator</h1>
     <form id="loan-form">
-        <label for="principal">Loan Amount:</label>
+        <label for="principal">Loan Amount (₹):</label>
         <input type="number" id="principal" name="principal" required>
         
         <label for="interest_rate">Annual Interest Rate (%):</label>
@@ -73,6 +82,7 @@
         <button type="submit">Calculate Loan</button>
     </form>
     <div id="loan-result"></div>
+    <div id="ai-advice"></div>
 
     <script>
         document.getElementById('loan-form').addEventListener('submit', function(e) {
@@ -86,12 +96,18 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById('loan-result').innerHTML = `
-                    <p>Monthly EMI: ₹${data.emi.toFixed(2)}</p>
-                    <p>Total Payment: ₹${data.total_payment.toFixed(2)}</p>
-                    <p>Total Interest: ₹${data.total_interest.toFixed(2)}</p>
+                    <h2>Loan Calculation Results</h2>
+                    <p><strong>Monthly EMI:</strong> ₹${data.emi.toFixed(2)}</p>
+                    <p><strong>Total Payment:</strong> ₹${data.total_payment.toFixed(2)}</p>
+                    <p><strong>Total Interest:</strong> ₹${data.total_interest.toFixed(2)}</p>
+                `;
+                document.getElementById('ai-advice').innerHTML = `
+                    <h2>AI Loan Advisor</h2>
+                    <p>${data.ai_advice}</p>
                 `;
             });
         });
     </script>
 </body>
 </html>
+
